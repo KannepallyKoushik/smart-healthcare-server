@@ -27,7 +27,8 @@ exports.consumeData = async (req, res) => {
 
 exports.raiseAlert = async (req, res) => {
   try {
-    const { patient_id } = req.body;
+    // const { patient_id } = req.body;
+    console.log("Raising an Alarm");
     res.status(201).json({
       message: "Raised an Alert for patient",
     });
