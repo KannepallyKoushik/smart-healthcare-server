@@ -10,8 +10,11 @@ const pool = new Pool({
 
 async function createTables() {
   try {
-    await pool.query("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
-    await pool.query("Drop table if exists blood_pressure");
+    await pool.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
+    await pool.query("Drop table if exists vital_temperature_sensor");
+    await pool.query("Drop table if exists critical_temperature_sensor");
+    await pool.query("Drop table if exists critical_bp_sensor");
+    await pool.query("Drop table if exists vital_bp_sensor");
     await pool.query("Drop table if exists consumer");
     await pool.query("Drop table if exists patient");
 
@@ -20,11 +23,23 @@ async function createTables() {
     );
 
     await pool.query(
-      "CREATE table consumer (consumer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, id uuid, CONSTRAINT fk_patient FOREIGN KEY(id) REFERENCES patient(id), timestamp text NOT NULL)"
+      "CREATE table vital_bp_sensor (vbp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, systolic_min_bp INT ,systolic_max_bp INT ,systolic_avg_bp INT , systolic_sd_bp INT ,diastolic_min_bp INT, diastolic_max_bp INT, diastolic_avg_bp INT, diastolic_sd_bp INT , heartrate_min INT , heartrate_max INT, heartrate_sd INT ,timestamp text)"
     );
 
     await pool.query(
-      "CREATE table blood_pressure (bp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, consumer_id INT, CONSTRAINT fk_consumer FOREIGN KEY(consumer_id) REFERENCES consumer(consumer_id), systolic_bp INT , diastolic_bp INT , unit VARCHAR (50) DEFAULT 'mmHg', date_time text)"
+      "CREATE table critical_bp_sensor (cbp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, systolic_critical_score INT ,diastolic_critical_score INT , heartrate_critical_score INT ,timestamp text)"
+    );
+
+    await pool.query(
+      "CREATE table critical_temperature_sensor (ctemp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  temperature_critical_score INT ,timestamp text)"
+    );
+
+    await pool.query(
+      "CREATE table vital_temperature_sensor (vtemp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, temp_min real ,temp_max real , temp_avg real, temp_sd real ,timestamp text)"
+    );
+
+    await pool.query(
+      "CREATE table consumer (consumer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, id uuid, CONSTRAINT fk_patient FOREIGN KEY(id) REFERENCES patient(id), date_of_diagnosis text NOT NULL,vbp_id INT,CONSTRAINT fk_vital_bp_sensor FOREIGN KEY(vbp_id) REFERENCES vital_bp_sensor(vbp_id), cbp_id INT,CONSTRAINT fk_critical_bp_sensor FOREIGN KEY(cbp_id) REFERENCES critical_bp_sensor(cbp_id), ctemp_id INT,CONSTRAINT fk_critical_temperature_sensor FOREIGN KEY(ctemp_id) REFERENCES critical_temperature_sensor(ctemp_id), vtemp_id INT,CONSTRAINT fk_vital_temperature_sensor FOREIGN KEY(vtemp_id) REFERENCES vital_temperature_sensor(vtemp_id) )"
     );
   } catch (error) {
     console.error(error.message);
