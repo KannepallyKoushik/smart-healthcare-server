@@ -39,7 +39,7 @@ exports.raiseAlert = async (req, res) => {
 
 exports.consumeBP = async (req, res) => {
   try {
-    const { consume_id, seconds } = req.body;
+    const { consume_id, mac_addr, seconds } = req.body;
     var data = { type: "bp", vital_data: [] };
 
     amqp.connect("amqp://localhost", function (error0, connection) {
@@ -51,7 +51,7 @@ exports.consumeBP = async (req, res) => {
           throw error1;
         }
         var exchange = "blood_pressure";
-        var key = "bp.*";
+        var key = mac_addr;
 
         channel.assertExchange(exchange, "topic", {
           durable: false,
@@ -98,7 +98,7 @@ exports.consumeBP = async (req, res) => {
 
 exports.consumeTemp = async (req, res) => {
   try {
-    const { consume_id, seconds } = req.body;
+    const { consume_id, mac_addr, seconds } = req.body;
     var data = { type: "temperature", vital_data: [] };
 
     amqp.connect("amqp://localhost", function (error0, connection) {
@@ -110,7 +110,7 @@ exports.consumeTemp = async (req, res) => {
           throw error1;
         }
         var exchange = "temperature";
-        var key = "temp.*";
+        var key = mac_addr;
 
         channel.assertExchange(exchange, "topic", {
           durable: false,

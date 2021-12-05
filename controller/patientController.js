@@ -61,3 +61,64 @@ exports.getPatientByID = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+exports.registerDevice = async (req, res) => {
+  try {
+    //1. Destructure the req.body
+    const { mac_addr, alias_name } = req.body;
+    //2. Check if device already exists
+    const device = await pool.query(
+      "select * from devices where mac_addr = $1 or alias_name=$2",
+      [mac_addr, alias_name]
+    );
+    if (device.rowCount != 0) {
+      return res
+        .status(400)
+        .send("A Device with Same MacAddress or Alias Name Already Exists");
+    }
+
+    await pool.query(
+      "insert into devices (mac_addr,alias_name) values ($1,$2)",
+      [mac_addr, alias_name]
+    );
+
+    res.status(200).json({
+      message: "Successfully registered the device",
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+exports.getAllDevices = async (req, res) => {
+  try {
+    const devices = await pool.query("select * from devices");
+
+    res.status(200).json(devices.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+exports.deleteDevice = async (req, res) => {
+  try {
+    var deviceID = req.params.deviceId;
+
+    const device = await pool.query(
+      "select * from devices where device_id = $1",
+      [deviceID]
+    );
+
+    if (device.rowCount == 0) {
+      return res.status(404).send("Device Not Found");
+    }
+    await pool.query("delete from devices where device_id = $1", [deviceID]);
+
+    return res.status(202).send("Device Deleted");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
