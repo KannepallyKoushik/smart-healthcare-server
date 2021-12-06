@@ -27,7 +27,7 @@ exports.consumeData = async (req, res) => {
 
 exports.raiseAlert = async (req, res) => {
   try {
-    // const { patient_id } = req.body;
+    const { mac_addr } = req.body;
     console.log("Raising an Alarm");
     res.status(201).json({
       message: "Raised an Alert for patient",
@@ -73,7 +73,7 @@ exports.consumeBP = async (req, res) => {
             channel.consume(
               q.queue,
               function (msg) {
-                data.vital_data.push(msg.content.toString());
+                data.vital_data.push(msg.content.toJSON());
               },
               {
                 noAck: true,
@@ -132,7 +132,7 @@ exports.consumeTemp = async (req, res) => {
             channel.consume(
               q.queue,
               function (msg) {
-                data.vital_data.push(msg.content.toString());
+                data.vital_data.push(msg.content.toJSON());
               },
               {
                 noAck: true,
