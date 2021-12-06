@@ -40,7 +40,7 @@ exports.raiseAlert = async (req, res) => {
 exports.consumeBP = async (req, res) => {
   try {
     const { consume_id, mac_addr, seconds } = req.body;
-    var data = { type: "bp", vital_data: [] };
+    var data = { type: "bp",device : mac_addr ,vital_data: [] };
 
     amqp.connect("amqp://localhost", function (error0, connection) {
       if (error0) {
@@ -73,7 +73,7 @@ exports.consumeBP = async (req, res) => {
             channel.consume(
               q.queue,
               function (msg) {
-                data.vital_data.push(msg.content.toJSON());
+                data.vital_data.push(JSON.parse(msg.content.toString()));
               },
               {
                 noAck: true,
@@ -99,7 +99,7 @@ exports.consumeBP = async (req, res) => {
 exports.consumeTemp = async (req, res) => {
   try {
     const { consume_id, mac_addr, seconds } = req.body;
-    var data = { type: "temperature", vital_data: [] };
+    var data = { type: "temperature", device : mac_addr,vital_data: [] };
 
     amqp.connect("amqp://localhost", function (error0, connection) {
       if (error0) {
@@ -132,7 +132,7 @@ exports.consumeTemp = async (req, res) => {
             channel.consume(
               q.queue,
               function (msg) {
-                data.vital_data.push(msg.content.toJSON());
+                data.vital_data.push(JSON.parse( msg.content.toString()));
               },
               {
                 noAck: true,
