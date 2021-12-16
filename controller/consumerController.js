@@ -40,7 +40,7 @@ exports.raiseAlert = async (req, res) => {
 exports.consumeBP = async (req, res) => {
   try {
     const { consume_id, mac_addr, seconds } = req.body;
-    var data = { type: "bp",device : mac_addr ,vital_data: [] };
+    var data = { type: "bp", device: mac_addr, vital_data: [] };
 
     amqp.connect("amqp://localhost", function (error0, connection) {
       if (error0) {
@@ -66,7 +66,9 @@ exports.consumeBP = async (req, res) => {
             if (error2) {
               throw error2;
             }
-            console.log(" [*] Waiting for logs. To exit press CTRL+C");
+            console.log(
+              " [*] Waiting for BP , Pulse logs. To exit press CTRL+C"
+            );
 
             channel.bindQueue(q.queue, exchange, key);
 
@@ -99,7 +101,7 @@ exports.consumeBP = async (req, res) => {
 exports.consumeTemp = async (req, res) => {
   try {
     const { consume_id, mac_addr, seconds } = req.body;
-    var data = { type: "temperature", device : mac_addr,vital_data: [] };
+    var data = { type: "temperature", device: mac_addr, vital_data: [] };
 
     amqp.connect("amqp://localhost", function (error0, connection) {
       if (error0) {
@@ -125,14 +127,16 @@ exports.consumeTemp = async (req, res) => {
             if (error2) {
               throw error2;
             }
-            console.log(" [*] Waiting for logs. To exit press CTRL+C");
+            console.log(
+              " [*] Waiting for Temperature  logs. To exit press CTRL+C"
+            );
 
             channel.bindQueue(q.queue, exchange, key);
 
             channel.consume(
               q.queue,
               function (msg) {
-                data.vital_data.push(JSON.parse( msg.content.toString()));
+                data.vital_data.push(JSON.parse(msg.content.toString()));
               },
               {
                 noAck: true,
