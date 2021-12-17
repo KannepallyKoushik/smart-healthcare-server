@@ -83,7 +83,8 @@ exports.consumeBP = async (req, res) => {
             );
 
             setTimeout(function () {
-              console.log(data);
+              // console.log(data);
+              arrayfy_bp_data(data.vital_data);
               channel.close();
               connection.close();
             }, seconds * 1000);
@@ -157,4 +158,8 @@ exports.consumeTemp = async (req, res) => {
   } catch (error) {
     console.error(error);
   }
+};
+
+var arrayfy_bp_data = function (data) {
+  console.log(data);
 };
