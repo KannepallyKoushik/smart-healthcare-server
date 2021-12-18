@@ -180,23 +180,23 @@ var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
       hr.push(vital.pulse);
     });
     // Finding Mean Values for Vital Data
-    var sys_mean = math.mean(sys);
-    var dia_mean = math.mean(dia);
-    var hr_mean = math.mean(hr);
+    var sys_mean = Math.mean(sys);
+    var dia_mean = Math.mean(dia);
+    var hr_mean = Math.mean(hr);
 
     // Finding Standard Deviation Values for Vital Data
-    var sys_dev = math.std(sys);
-    var dia_dev = math.std(dia);
-    var hr_dev = math.std(hr);
+    var sys_dev = Math.std(sys);
+    var dia_dev = Math.std(dia);
+    var hr_dev = Math.std(hr);
 
     // Finding Min and MaxValues for Vital Data
-    var sys_min = math.min(sys);
-    var dia_min = math.min(dia);
-    var hr_min = math.min(hr);
+    var sys_min = Math.min(sys);
+    var dia_min = Math.min(dia);
+    var hr_min = Math.min(hr);
 
-    var sys_max = math.max(sys);
-    var dia_max = math.max(dia);
-    var hr_max = math.max(hr);
+    var sys_max = Math.max(sys);
+    var dia_max = Math.max(dia);
+    var hr_max = Math.max(hr);
 
     const sys_normal_values = {
       sys_min: sys_min,
@@ -243,10 +243,10 @@ var Calc_CriticalScores_and_NormaliseValues_Temp = (data) => {
     });
 
     // Finding Min, Max , Mean and Standard Deviation values for Temperature
-    const temp_min = math.min(temp);
-    const temp_max = math.max(temp);
-    const temp_dev = math.dev(temp);
-    const temp_mean = math.mean(temp);
+    const temp_min = Math.min(temp);
+    const temp_max = Math.max(temp);
+    const temp_dev = Math.dev(temp);
+    const temp_mean = Math.mean(temp);
 
     const temp_normal_values = {
       temperature_min: temp_min,
