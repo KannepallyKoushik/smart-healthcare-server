@@ -85,11 +85,13 @@ exports.consumeBP = async (req, res) => {
 
             setTimeout(function () {
               // console.log(data);
-              Calc_CriticalScores_and_NormaliseValues_BP(data.vital_data).then(
-                (resolved_data) => {
+              Calc_CriticalScores_and_NormaliseValues_BP(data.vital_data)
+                .then((resolved_data) => {
                   console.log(resolved_data);
-                }
-              );
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
               channel.close();
               connection.close();
             }, seconds * 1000);
@@ -151,11 +153,13 @@ exports.consumeTemp = async (req, res) => {
 
             setTimeout(function () {
               // console.log(data);
-              Calc_CriticalScores_and_NormaliseValues_Temp(
-                data.vital_data
-              ).then((resolved_data) => {
-                console.log(resolved_data);
-              });
+              Calc_CriticalScores_and_NormaliseValues_Temp(data.vital_data)
+                .then((resolved_data) => {
+                  console.log(resolved_data);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
               channel.close();
               connection.close();
             }, seconds * 1000);
@@ -171,8 +175,8 @@ exports.consumeTemp = async (req, res) => {
 };
 
 var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
-  try {
-    return new Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
+    try {
       var sys = [];
       var dia = [];
       var hr = [];
@@ -234,15 +238,15 @@ var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
         },
       };
       resolve(result);
-    });
-  } catch (error) {
-    console.error(error);
-  }
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
 
 var Calc_CriticalScores_and_NormaliseValues_Temp = (data) => {
-  try {
-    return new Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
+    try {
       var temp = [];
       data.forEach((vital) => {
         temp.push(vital.temperature);
@@ -268,8 +272,8 @@ var Calc_CriticalScores_and_NormaliseValues_Temp = (data) => {
         normal_values: temp_normal_values,
       };
       resolve(result);
-    });
-  } catch (error) {
-    console.error(error);
-  }
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
