@@ -245,7 +245,7 @@ var Calc_CriticalScores_and_NormaliseValues_Temp = (data) => {
     // Finding Min, Max , Mean and Standard Deviation values for Temperature
     const temp_min = Math.min(temp);
     const temp_max = Math.max(temp);
-    const temp_dev = Math.dev(temp);
+    const temp_dev = Math.std(temp);
     const temp_mean = Math.mean(temp);
 
     const temp_normal_values = {
