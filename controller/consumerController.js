@@ -84,10 +84,9 @@ exports.consumeBP = async (req, res) => {
 
             setTimeout(function () {
               // console.log(data);
-              Calc_CriticalScores_and_NormaliseValues.then(
-                data.vital_data,
-                (resolved_response) => {
-                  console.log(resolved_response);
+              Calc_CriticalScores_and_NormaliseValues_BP(data.vital_data).then(
+                (resolved_data) => {
+                  console.log(resolved_data);
                 }
               );
               channel.close();
@@ -165,7 +164,7 @@ exports.consumeTemp = async (req, res) => {
   }
 };
 
-var Calc_CriticalScores_and_NormaliseValues = (data) => {
+var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
   return new Promise(function (resolve, reject) {
     var sys = [];
     var dia = [];
