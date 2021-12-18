@@ -84,7 +84,12 @@ exports.consumeBP = async (req, res) => {
 
             setTimeout(function () {
               // console.log(data);
-              arrayfy_bp_data(data.vital_data);
+              Calc_CriticalScores_and_NormaliseValues.then(
+                data.vital_data,
+                (resolved_response) => {
+                  console.log(resolved_response);
+                }
+              );
               channel.close();
               connection.close();
             }, seconds * 1000);
@@ -160,6 +165,21 @@ exports.consumeTemp = async (req, res) => {
   }
 };
 
-var arrayfy_bp_data = function (data) {
-  console.log(data);
+var Calc_CriticalScores_and_NormaliseValues = (data) => {
+  return new Promise(function (resolve, reject) {
+    var sys = [];
+    var dia = [];
+    var hr = [];
+    data.forEach((vital) => {
+      sys.push(vital.systolic_blood_pressure);
+      dia.push(vital.diastolic_blood_pressure);
+      hr.push(vital.pulse);
+    });
+    const result = {
+      systolic_blood_pressure: sys,
+      diastolic_blood_pressure: dia,
+      Pulse: hr,
+    };
+    resolve(result);
+  });
 };
