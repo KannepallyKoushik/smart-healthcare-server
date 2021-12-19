@@ -14,13 +14,14 @@ async function createTables() {
     await pool.query("Drop table if exists consumer");
     await pool.query("Drop table if exists patient");
     await pool.query("Drop table if exists devices");
+    await pool.query("Drop table if exists thyroid_diabetes");
     await pool.query("Drop table if exists vital_temperature_sensor");
     await pool.query("Drop table if exists critical_temperature_sensor");
     await pool.query("Drop table if exists critical_bp_sensor");
     await pool.query("Drop table if exists vital_bp_sensor");
 
     await pool.query(
-      "CREATE table patient (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), name VARCHAR ( 255 ) NOT NULL,email text UNIQUE NOT NULL ,Age VARCHAR ( 50 ) NOT NULL, Sex VARCHAR ( 50 ) NOT NULL, Smoker BOOLEAN NOT NULL Default FALSE, CigsPerDay INT NOT NULL DEFAULT 0, PrevalentStroke BOOLEAN NOT NULL DEFAULT FALSE, Diabetes BOOLEAN NOT NULL DEFAULT FALSE)"
+      "CREATE table patient (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), name VARCHAR ( 255 ) NOT NULL,email text UNIQUE NOT NULL ,Age VARCHAR ( 50 ) NOT NULL, Sex VARCHAR ( 50 ) NOT NULL, Thyroid VARCHAR ( 50 ) NOT NULL Default 'NOT KNOWN', PrevalentStroke BOOLEAN NOT NULL DEFAULT FALSE, Diabetes BOOLEAN NOT NULL DEFAULT FALSE)"
     );
 
     await pool.query(
@@ -40,7 +41,11 @@ async function createTables() {
     );
 
     await pool.query(
-      "CREATE table consumer (consumer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, id uuid, CONSTRAINT fk_patient FOREIGN KEY(id) REFERENCES patient(id), date_of_diagnosis text NOT NULL,vbp_id INT,CONSTRAINT fk_vital_bp_sensor FOREIGN KEY(vbp_id) REFERENCES vital_bp_sensor(vbp_id), cbp_id INT,CONSTRAINT fk_critical_bp_sensor FOREIGN KEY(cbp_id) REFERENCES critical_bp_sensor(cbp_id), ctemp_id INT,CONSTRAINT fk_critical_temperature_sensor FOREIGN KEY(ctemp_id) REFERENCES critical_temperature_sensor(ctemp_id), vtemp_id INT,CONSTRAINT fk_vital_temperature_sensor FOREIGN KEY(vtemp_id) REFERENCES vital_temperature_sensor(vtemp_id) )"
+      "CREATE table thyroid_diabetes (td_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY , sugar_post_lunch INT, sugar_pre_lunch INT, t3_harmone_value INT , t4_harmone_value INT , tsh_value INT)"
+    );
+
+    await pool.query(
+      "CREATE table consumer (consumer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, id uuid, CONSTRAINT fk_patient FOREIGN KEY(id) REFERENCES patient(id), date_of_diagnosis text NOT NULL,td_id INT,CONSTRAINT fk_thyroid_diabetes FOREIGN KEY(td_id) REFERENCES thyroid_diabetes(td_id),vbp_id INT,CONSTRAINT fk_vital_bp_sensor FOREIGN KEY(vbp_id) REFERENCES vital_bp_sensor(vbp_id), cbp_id INT,CONSTRAINT fk_critical_bp_sensor FOREIGN KEY(cbp_id) REFERENCES critical_bp_sensor(cbp_id), ctemp_id INT,CONSTRAINT fk_critical_temperature_sensor FOREIGN KEY(ctemp_id) REFERENCES critical_temperature_sensor(ctemp_id), vtemp_id INT,CONSTRAINT fk_vital_temperature_sensor FOREIGN KEY(vtemp_id) REFERENCES vital_temperature_sensor(vtemp_id) )"
     );
 
     await pool.query(

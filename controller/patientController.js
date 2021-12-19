@@ -1,18 +1,21 @@
 const pool = require("../db");
 
+exports.getAllPatients = async (req, res) => {
+  try {
+    const patients = await pool.query("SELECT * from patient");
+
+    return res.status(201).json(patients.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send(error.message);
+  }
+};
+
 exports.register = async (req, res) => {
   try {
     //1. Destructure the req.body (name, email , password)
-    const {
-      Name,
-      Age,
-      Sex,
-      email,
-      Smoker,
-      CigsPerDay,
-      PrevalentStroke,
-      Diabetes,
-    } = req.body;
+    const { Name, Age, Sex, email, thyroid, PrevalentStroke, Diabetes } =
+      req.body;
 
     //2. Check if user exists (if user exist then throw error)
     const user = await pool.query("select * from patient where email = $1", [
@@ -25,8 +28,8 @@ exports.register = async (req, res) => {
 
     //3. Enter the new user into the DB
     const patient = await pool.query(
-      "Insert into patient(name , email,age,sex,smoker,cigsperday,prevalentstroke,diabetes) values($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id",
-      [Name, email, Age, Sex, Smoker, CigsPerDay, PrevalentStroke, Diabetes]
+      "Insert into patient(name , email,age,sex,thyroid,prevalentstroke,diabetes) values($1,$2,$3,$4,$5,$6,$7) RETURNING id",
+      [Name, email, Age, Sex, thyroid, PrevalentStroke, Diabetes]
     );
 
     const patient_id = patient.rows[0].id;
@@ -51,6 +54,24 @@ exports.getPatientByID = async (req, res) => {
       email,
     ]);
 
+    if (user.rowCount == 0) {
+      return res.status(404).send("User Does not exist");
+    }
+
+    res.status(200).json(user.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+exports.getPatientData = async (req, res) => {
+  try {
+    const { patient_id } = req.body;
+
+    const user = await pool.query("select * from patient where id = $1", [
+      patient_id,
+    ]);
     if (user.rowCount == 0) {
       return res.status(404).send("User Does not exist");
     }
@@ -135,6 +156,36 @@ exports.verify = async (req, res) => {
       return res.status(403).send("No user found");
     }
     res.json(true);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send(error.message);
+  }
+};
+
+exports.manualThyroid_Diabetes_Data = async (req, res) => {
+  try {
+    const {
+      sugar_post_lunch,
+      sugar_pre_lunch,
+      t3_harmone_value,
+      t4_harmone_value,
+      tsh_value,
+      consumer_id,
+    } = req.body;
+
+    var thy_dia = await pool.query(
+      "INSERT INTO thyroid_diabetes (sugar_post_lunch , sugar_pre_lunch , t3_harmone_value , t4_harmone_value , tsh_value) VALUES ($1, $2, $3, $4, $5) returning td_id",
+      [
+        sugar_post_lunch,
+        sugar_pre_lunch,
+        t3_harmone_value,
+        t4_harmone_value,
+        tsh_value,
+      ]
+    );
+    thy_dia = thy_dia.rows[0].td_id;
+
+    console.log(thy_dia);
   } catch (error) {
     console.error(error.message);
     res.status(500).send(error.message);
