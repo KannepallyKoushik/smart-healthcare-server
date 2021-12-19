@@ -185,7 +185,14 @@ exports.manualThyroid_Diabetes_Data = async (req, res) => {
     );
     thy_dia = thy_dia.rows[0].td_id;
 
-    console.log(thy_dia);
+    await pool.query("Update consumer set td_id = $1 where consumer_id = $2", [
+      thy_dia,
+      consumer_id,
+    ]);
+
+    res.status(200).json({
+      message: "Successfully Recorded the values",
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send(error.message);
