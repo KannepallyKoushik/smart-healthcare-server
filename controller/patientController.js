@@ -122,3 +122,20 @@ exports.deleteDevice = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+exports.verify = async (req, res) => {
+  try {
+    const { patient_id } = req.body;
+
+    const user = await pool.query("select * from patient where id = $1", [
+      patient_id,
+    ]);
+
+    if (user.rowCount == 0) {
+      return res.status(403).send("No user found");
+    }
+    res.json(true);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
