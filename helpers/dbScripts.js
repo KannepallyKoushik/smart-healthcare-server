@@ -21,7 +21,7 @@ async function createTables() {
     await pool.query("Drop table if exists vital_bp_sensor");
 
     await pool.query(
-      "CREATE table patient (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), name VARCHAR ( 255 ) NOT NULL,email text UNIQUE NOT NULL ,Age VARCHAR ( 50 ) NOT NULL, Sex VARCHAR ( 50 ) NOT NULL, Thyroid VARCHAR ( 50 ) NOT NULL Default 'NOT KNOWN', PrevalentStroke BOOLEAN NOT NULL DEFAULT FALSE, Diabetes BOOLEAN NOT NULL DEFAULT FALSE)"
+      "CREATE table patient (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), name VARCHAR ( 255 ) NOT NULL,email text UNIQUE NOT NULL ,Age VARCHAR ( 50 ) NOT NULL, Sex VARCHAR ( 50 ) NOT NULL, Thyroid VARCHAR ( 50 ) NOT NULL Default 'NOT KNOWN', PrevalentStroke BOOLEAN NOT NULL DEFAULT FALSE, Diabetes VARCHAR ( 50 ) NOT NULL Default 'NOT KNOWN')"
     );
 
     await pool.query(
@@ -41,7 +41,7 @@ async function createTables() {
     );
 
     await pool.query(
-      "CREATE table thyroid_diabetes (td_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY , sugar_post_lunch INT, sugar_pre_lunch INT, t3_harmone_value INT , t4_harmone_value INT , tsh_value INT)"
+      "CREATE table thyroid_diabetes (td_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY , sugar_post_lunch VARCHAR ( 50 ) NOT NULL Default 'NOT RECORDED', sugar_pre_lunch VARCHAR ( 50 ) NOT NULL Default 'NOT RECORDED', t3_harmone_value VARCHAR ( 50 ) NOT NULL Default 'NOT RECORDED' , t4_harmone_value VARCHAR ( 50 ) NOT NULL Default 'NOT RECORDED' , tsh_value VARCHAR ( 50 ) NOT NULL Default 'NOT RECORDED')"
     );
 
     await pool.query(
