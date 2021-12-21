@@ -217,7 +217,7 @@ exports.calcCriticalScores = async (req, res) => {
   }
 };
 
-var Calc_CriticalScores_and_NormaliseValues_BP = (data, consume_id) => {
+var Calc_CriticalScores_and_NormaliseValues_BP = async (data, consume_id) => {
   return new Promise(async (resolve, reject) => {
     try {
       var sys = [];
@@ -321,7 +321,7 @@ var Calc_CriticalScores_and_NormaliseValues_BP = (data, consume_id) => {
 };
 
 var Calc_CriticalScores_and_NormaliseValues_Temp = async (data, consume_id) => {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async (resolve, reject) => {
     try {
       var temp = [];
       data.forEach((vital) => {
