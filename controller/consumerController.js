@@ -195,6 +195,11 @@ exports.calcCriticalScores = async (req, res) => {
       consume_row.rows[0].id,
     ]);
 
+    const manualThyroid_Diabetes_Data = await pool.query(
+      "Select * from thyroid_diabetes where td_id= $1",
+      [consume_row.rows[0].td_id]
+    );
+
     const bp_vital_data = await pool.query(
       "Select * from vital_bp_sensor where vbp_id=$1",
       [consume_row.rows[0].vbp_id]
@@ -207,6 +212,7 @@ exports.calcCriticalScores = async (req, res) => {
 
     return res.status(200).json({
       PatientData: patient.rows,
+      Manual_Data: manualThyroid_Diabetes_Data.rows,
       BP_Vital_Data: bp_vital_data.rows,
       Temp_Vital_Data: temp_vital_data.rows,
     });
