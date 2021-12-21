@@ -7,8 +7,10 @@ exports.consumeData = async (req, res) => {
   try {
     const { patient_id } = req.body;
     const d = new Date();
-    const date_of_diagnosis =
-      d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear();
+    const date = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = d.getFullYear();
+    const date_of_diagnosis = date + "-" + month + "-" + year;
 
     const consumer = await pool.query(
       "Insert into consumer(id, date_of_diagnosis) values($1,$2) RETURNING consumer_id",
