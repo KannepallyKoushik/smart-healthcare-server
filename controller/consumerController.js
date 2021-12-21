@@ -201,7 +201,7 @@ exports.calcCriticalScores = async (req, res) => {
     );
 
     const temp_vital_data = await pool.query(
-      "Select * form vital_temperature_sensor where vtemp_id=$1",
+      "Select * from vital_temperature_sensor where vtemp_id=$1",
       [consume_row.rows[0].vtemp_id]
     );
 
