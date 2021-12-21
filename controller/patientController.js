@@ -213,17 +213,18 @@ exports.pushToCloud = async (req, res) => {
       [patient_id, from_date, to_date]
     );
 
+
     var result = {
-      patient_data: patient_data,
+      patient_data: patient_data.rows,
       data: [],
     };
-
-    consumers.forEach(async (consumed_row) => {
+console.log(consumers.rows)
+    for(const consumed_row of consumers.rows) {
       var stored_consumed_data = {
         date_of_diagnosis: consumed_row.date_of_diagnosis,
         critical_and_vital_data: [],
       };
-
+console.log(consumed_row);
       const bp_vital_data = await pool.query(
         "Select * from vital_bp_sensor where vbp_id=$1",
         [consumed_row.vbp_id]
@@ -235,7 +236,7 @@ exports.pushToCloud = async (req, res) => {
       );
 
       const temp_vital_data = await pool.query(
-        "Select * form vital_temperature_sensor where vtemp_id=$1",
+        "Select * from vital_temperature_sensor where vtemp_id=$1",
         [consumed_row.vtemp_id]
       );
 
@@ -244,17 +245,20 @@ exports.pushToCloud = async (req, res) => {
         [consumed_row.ctemp_id]
       );
 
-      const combined_data = {
-        bp_vital_data: bp_vital_data,
-        bp_critical_data: bp_critical_data,
-        temp_vital_data: temp_vital_data,
-        temp_critical_data: temp_critical_data,
-      };
+	const manual_data = await pool.query("Select * from thyroid_diabetes where td_id=$1",[consumed_row.td_id]);
 
+      const combined_data = {
+        bp_vital_data: bp_vital_data.rows,
+        bp_critical_data: bp_critical_data.rows,
+        temp_vital_data: temp_vital_data.rows,
+        temp_critical_data: temp_critical_data.rows,
+	thyroid_diabetes_data : manual_data.rows
+      };
+console.log(stored_consumed_data);
       stored_consumed_data.critical_and_vital_data.push(combined_data);
 
       result.data.push(stored_consumed_data);
-    });
+    }
 
     res.status(200).json(result);
   } catch (error) {
