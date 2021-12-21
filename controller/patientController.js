@@ -224,22 +224,22 @@ exports.pushToCloud = async (req, res) => {
         critical_and_vital_data: [],
       };
 
-      const bp_vital_data = await pool.query(
+      const bp_vital_data = pool.query(
         "Select * from vital_bp_sensor where vbp_id=$1",
         [consumed_row.vbp_id]
       );
 
-      const bp_critical_data = await pool.query(
+      const bp_critical_data = pool.query(
         "Select * from critical_bp_sensor where cbp_id= $1",
         [consumed_row.cbp_id]
       );
 
-      const temp_vital_data = await pool.query(
+      const temp_vital_data = pool.query(
         "Select * form vital_temperature_sensor where vtemp_id=$1",
         [consumed_row.vtemp_id]
       );
 
-      const temp_critical_data = await pool.query(
+      const temp_critical_data = pool.query(
         "Select * from critical_temperature_sensor where ctemp_id= $1",
         [consumed_row.ctemp_id]
       );
