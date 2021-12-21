@@ -25,7 +25,7 @@ async function createTables() {
     );
 
     await pool.query(
-      "CREATE table vital_bp_sensor (vbp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, systolic_min_bp INT ,systolic_max_bp INT ,systolic_avg_bp INT , systolic_sd_bp INT ,diastolic_min_bp INT, diastolic_max_bp INT, diastolic_avg_bp INT, diastolic_sd_bp INT , heartrate_min INT , heartrate_max INT, heartrate_sd INT ,timestamp text)"
+      "CREATE table vital_bp_sensor (vbp_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, systolic_min_bp INT ,systolic_max_bp INT ,systolic_avg_bp INT , systolic_sd_bp INT ,diastolic_min_bp INT, diastolic_max_bp INT, diastolic_avg_bp INT, diastolic_sd_bp INT , heartrate_min INT , heartrate_max INT,heartrate_avg INT ,heartrate_sd INT ,timestamp text)"
     );
 
     await pool.query(

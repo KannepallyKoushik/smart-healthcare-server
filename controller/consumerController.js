@@ -23,6 +23,7 @@ exports.consumeData = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    res.status(500).send(error.message);
   }
 };
 
@@ -35,6 +36,7 @@ exports.raiseAlert = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    res.status(500).send(error.message);
   }
 };
 
@@ -84,8 +86,10 @@ exports.consumeBP = async (req, res) => {
             );
 
             setTimeout(function () {
-              // console.log(data);
-              Calc_CriticalScores_and_NormaliseValues_BP(data.vital_data)
+              Calc_CriticalScores_and_NormaliseValues_BP(
+                data.vital_data,
+                consume_id
+              )
                 .then((resolved_data) => {
                   console.log(resolved_data);
                 })
@@ -103,6 +107,7 @@ exports.consumeBP = async (req, res) => {
     res.send(`Consuming the topic you have sent wait for ${seconds} seconds`);
   } catch (error) {
     console.error(error);
+    res.status(500).send(error.message);
   }
 };
 
@@ -152,8 +157,10 @@ exports.consumeTemp = async (req, res) => {
             );
 
             setTimeout(function () {
-              // console.log(data);
-              Calc_CriticalScores_and_NormaliseValues_Temp(data.vital_data)
+              Calc_CriticalScores_and_NormaliseValues_Temp(
+                data.vital_data,
+                consume_id
+              )
                 .then((resolved_data) => {
                   console.log(resolved_data);
                 })
@@ -171,10 +178,46 @@ exports.consumeTemp = async (req, res) => {
     res.send(`Consuming the topic you have sent wait for ${seconds} seconds`);
   } catch (error) {
     console.error(error);
+    res.status(500).send(error.message);
   }
 };
 
-var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
+exports.calcCriticalScores = async (req, res) => {
+  try {
+    const { consume_id } = req.body;
+
+    const consume_row = await pool.query(
+      "Select * from consumer where consumer_id=$1",
+      [consume_id]
+    );
+
+    const patient = await pool.query(
+      "Select * from patient where patient_id=$1",
+      [consume_row.rows[0].id]
+    );
+
+    const bp_vital_data = await pool.query(
+      "Select * from vital_bp_sensor where vbp_id=$1",
+      [consume_row.rows[0].vbp_id]
+    );
+
+    const temp_vital_data = await pool.query(
+      "Select * form vital_temperature_sensor where vtemp_id=$1",
+      [consume_row.rows[0].vtemp_id]
+    );
+
+    return res.status(200).json({
+      patient,
+      bp_vital_data,
+      temp_vital_data,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send(error.message);
+  }
+};
+
+var Calc_CriticalScores_and_NormaliseValues_BP = (data, consume_id) => {
   return new Promise(function (resolve, reject) {
     try {
       var sys = [];
@@ -195,6 +238,13 @@ var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
       var dia_dev = math.std(dia);
       var hr_dev = math.std(hr);
 
+      if (sys_dev > 10 || dia_dev > 10 || hr_dev > 10) {
+        resolve({
+          error:
+            "Oops Like like there is problem with readings and there is a lot of deviation, Please try again",
+        });
+      }
+
       // Finding Min and MaxValues for Vital Data
       var sys_min = math.min(sys);
       var dia_min = math.min(dia);
@@ -203,6 +253,32 @@ var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
       var sys_max = math.max(sys);
       var dia_max = math.max(dia);
       var hr_max = math.max(hr);
+
+      // Writing Values into Vital Database Tables for Pulse and BP
+
+      const retured_values = await pool.query(
+        "Insert into vital_bp_sensor(systolic_min_bp,systolic_max_bp,systolic_avg_bp, systolic_sd_bp,diastolic_min_bp, diastolic_max_bp, diastolic_avg_bp, diastolic_sd_bp, heartrate_min, heartrate_max,heartrate_avg, heartrate_sd,timestamp) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning  vbp_id",
+        [
+          parseInt(sys_min),
+          parseInt(sys_max),
+          parseInt(sys_mean),
+          parseInt(sys_dev),
+          parseInt(dia_min),
+          parseInt(dia_max),
+          parseInt(dia_mean),
+          parseInt(dia_dev),
+          parseInt(hr_min),
+          parseInt(hr_max),
+          parseInt(hr_mean),
+          parseInt(hr_dev),
+          Date.now(),
+        ]
+      );
+
+      await pool.query(
+        "Update consumer set vbp_id = $1 where consumer_id = $2 ",
+        [retured_values.rows[0].vbp_id, consume_id]
+      );
 
       const sys_normal_values = {
         sys_min: sys_min,
@@ -244,7 +320,7 @@ var Calc_CriticalScores_and_NormaliseValues_BP = (data) => {
   });
 };
 
-var Calc_CriticalScores_and_NormaliseValues_Temp = (data) => {
+var Calc_CriticalScores_and_NormaliseValues_Temp = (data, consume_id) => {
   return new Promise(function (resolve, reject) {
     try {
       var temp = [];
@@ -257,6 +333,23 @@ var Calc_CriticalScores_and_NormaliseValues_Temp = (data) => {
       const temp_max = math.max(temp);
       const temp_dev = math.std(temp);
       const temp_mean = math.mean(temp);
+
+      if (temp_dev > 5) {
+        resolve({
+          error:
+            "Please try to collect data again , there is lot of deviation in values. There might be some error while collecting",
+        });
+      }
+
+      const retured_values = await pool.query(
+        "insert into vital_temperature_sensor(temp_min,temp_max, temp_avg, temp_sd,timestamp) values($1,$2,$3,$4,$5) returning vtemp_id",
+        [temp_min, temp_max, temp_mean, temp_dev, Date.now()]
+      );
+
+      await pool.query(
+        "Update consumer set vtemp_id = $1 where consumer_id = $2 ",
+        [retured_values.rows[0].vtemp_id, consume_id]
+      );
 
       const temp_normal_values = {
         temperature_min: temp_min,

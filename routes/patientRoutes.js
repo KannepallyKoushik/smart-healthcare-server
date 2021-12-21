@@ -14,4 +14,6 @@ router.post("/getPatientData", patientController.getPatientData);
 
 router.post("/manualRecordings", patientController.manualThyroid_Diabetes_Data);
 
+router.post("/pushToCloud", patientController.pushToCloud);
+
 module.exports = router;

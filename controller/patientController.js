@@ -198,3 +198,68 @@ exports.manualThyroid_Diabetes_Data = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+exports.pushToCloud = async (req, res) => {
+  try {
+    const { patient_id, from_date, to_date } = req.body;
+
+    const patient_data = await pool.query(
+      "Select * from patient where id = $1",
+      [patient_id]
+    );
+
+    const consumers = await pool.query(
+      "SELECT * FROM consumer WHERE id = $1 and date_of_diagnosis between $2 and $3",
+      [patient_id, from_date, to_date]
+    );
+
+    var result = {
+      patient_data: patient_data,
+      data: [],
+    };
+
+    consumers.forEach((consumed_row) => {
+      var stored_consumed_data = {
+          date_of_diagnosis: consumed_row.date_of_diagnosis,
+          critical_and_vital_data: []
+        },
+        
+
+        const bp_vital_data = await pool.query(
+          "Select * from vital_bp_sensor where vbp_id=$1",
+          [consumed_row.vbp_id]
+        );
+
+        const bp_critical_data = await pool.query(
+          "Select * from critical_bp_sensor where cbp_id= $1",[consumed_row.cbp_id]
+        )
+    
+        const temp_vital_data = await pool.query(
+          "Select * form vital_temperature_sensor where vtemp_id=$1",
+          [consumed_row.vtemp_id]
+        );
+
+        const temp_critical_data = await pool.query(
+          "Select * from critical_temperature_sensor where ctemp_id= $1",[consumed_row.ctemp_id]
+        )
+
+        const combined_data = {
+          bp_vital_data : bp_vital_data,
+          bp_critical_data : bp_critical_data,
+          temp_vital_data : temp_vital_data,
+          temp_critical_data : temp_critical_data
+        }
+
+        stored_consumed_data.critical_and_vital_data.push(combined_data)
+
+        result.data.push(stored_consumed_data)
+
+    });
+
+    res.status(200).json(result)
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send(error.message);
+  }
+};
