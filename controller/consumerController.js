@@ -206,9 +206,9 @@ exports.calcCriticalScores = async (req, res) => {
     );
 
     return res.status(200).json({
-      patient,
-      bp_vital_data,
-      temp_vital_data,
+      PatientData: patient.rows,
+      BP_Vital_Data: bp_vital_data.rows,
+      Temp_Vital_Data: temp_vital_data.rows,
     });
   } catch (error) {
     console.error(error.message);
