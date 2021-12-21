@@ -191,10 +191,9 @@ exports.calcCriticalScores = async (req, res) => {
       [consume_id]
     );
 
-    const patient = await pool.query(
-      "Select * from patient where patient_id=$1",
-      [consume_row.rows[0].id]
-    );
+    const patient = await pool.query("Select * from patient where id=$1", [
+      consume_row.rows[0].id,
+    ]);
 
     const bp_vital_data = await pool.query(
       "Select * from vital_bp_sensor where vbp_id=$1",
