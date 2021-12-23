@@ -58,7 +58,10 @@ exports.getPatientByID = async (req, res) => {
       return res.status(404).send("User Does not exist");
     }
 
-    res.status(200).json(user.rows[0]);
+    res.status(200).json({
+      message: "Successfully LoggedIn",
+      id: user.rows[0].id,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
