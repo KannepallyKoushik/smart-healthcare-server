@@ -309,15 +309,16 @@ exports.calcCriticalScores = async (req, res) => {
       Abnormalities: [],
     };
 
-    BP_Abnormality != null
-      ? result.Abnormalities.push(BP_Abnormality)
-      : console.log("No abnormality in BP found");
-    pulseAbnormality != null
-      ? result.Abnormalities.push(pulseAbnormality)
-      : console.log("No abnormality in Pulse found");
-    temperatureAbnormality != null
-      ? result.Abnormalities.push(temperatureAbnormality)
-      : console.log("No abnormality in Temperature found");
+    // BP_Abnormality != null
+    //   ? result.Abnormalities.push(BP_Abnormality)
+    //   : console.log("No abnormality in BP found");
+    // pulseAbnormality != null
+    //   ? result.Abnormalities.push(pulseAbnormality)
+    //   : console.log("No abnormality in Pulse found");
+    // temperatureAbnormality != null
+    //   ? result.Abnormalities.push(temperatureAbnormality)
+    //   : console.log("No abnormality in Temperature found");
+    console.log(BP_Abnormality, pulseAbnormality, temperatureAbnormality);
 
     res.status(201).json(result);
   } catch (error) {
