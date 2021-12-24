@@ -10,6 +10,8 @@ router.post("/consume/temperature", consumerController.consumeTemp);
 
 router.post("/emergency", consumerController.raiseAlert);
 
+router.post("/reviewData", consumerController.reviewData);
+
 router.post("/criticalScores", consumerController.calcCriticalScores);
 
 module.exports = router;

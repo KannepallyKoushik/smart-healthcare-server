@@ -184,6 +184,67 @@ exports.consumeTemp = async (req, res) => {
   }
 };
 
+exports.reviewData = async (req, res) => {
+  try {
+    const { consume_id } = req.body;
+
+    const consume_row = await pool.query(
+      "Select * from consumer where consumer_id=$1",
+      [consume_id]
+    );
+
+    const patient = await pool.query(
+      "Select name,age,sex,thyroid,prevalentstroke,diabetes from patient where id=$1",
+      [consume_row.rows[0].id]
+    );
+
+    const manualThyroid_Diabetes_Data = await pool.query(
+      "Select sugar_post_lunch, sugar_pre_lunch,t3_harmone_value t4_harmone_value,tsh_value from thyroid_diabetes where td_id= $1",
+      [consume_row.rows[0].td_id]
+    );
+
+    const bp_vital_data = await pool.query(
+      "Select * from vital_bp_sensor where vbp_id=$1",
+      [consume_row.rows[0].vbp_id]
+    );
+
+    const temp_vital_data = await pool.query(
+      "Select * from vital_temperature_sensor where vtemp_id=$1",
+      [consume_row.rows[0].vtemp_id]
+    );
+
+    const bp = {
+      systolic_bp_mean: bp_vital_data.rows[0].systolic_avg_bp,
+      systolic_collected_variation: bp_vital_data.rows[0].systolic_sd_bp,
+      diastolic_bp_mean: bp_vital_data.rows[0].diastolic_avg_bp,
+      diastolic_collected_variation: bp_vital_data.rows[0].diastolic_sd_bp,
+    };
+
+    const pulse = {
+      pulse_mean: bp_vital_data.rows[0].heartrate_avg,
+      pulse_collected_variation: bp_vital_data.rows[0].heartrate_sd,
+    };
+
+    const tempValues = {
+      mean_body_temperature: temp_vital_data.rows[0].temp_avg,
+      variance_body_temperature: temp_vital_data.rows[0].temp_sd,
+    };
+
+    var result = {
+      patientDetails: patient.rows[0],
+      Sugar_Thyroid_Levels: manualThyroid_Diabetes_Data.rows[0],
+      blood_pressure_data: bp,
+      pulse_data: pulse,
+      body_temperature_data: tempValues,
+    };
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send(error.message);
+  }
+};
+
 exports.calcCriticalScores = async (req, res) => {
   try {
     const { consume_id } = req.body;
