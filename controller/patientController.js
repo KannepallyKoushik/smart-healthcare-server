@@ -197,7 +197,7 @@ exports.manualThyroid_Diabetes_Data = async (req, res) => {
       message: "Successfully Recorded the values",
     });
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     res.status(500).send(error.message);
   }
 };

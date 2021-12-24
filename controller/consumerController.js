@@ -270,6 +270,7 @@ exports.reviewData = async (req, res) => {
 
 exports.calcCriticalScores = async (req, res) => {
   try {
+const time1 = Date.now()
     const {
       patientDetails,
       Sugar_Thyroid_Levels,
@@ -321,6 +322,8 @@ exports.calcCriticalScores = async (req, res) => {
     //console.log(BP_Abnormality, pulseAbnormality, temperatureAbnormality);
 
     res.status(201).json(result);
+const time2 = Date.now()
+console.log(time2-time1)
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
