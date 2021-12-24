@@ -199,7 +199,7 @@ exports.reviewData = async (req, res) => {
     );
 
     const manualThyroid_Diabetes_Data = await pool.query(
-      "Select sugar_post_lunch, sugar_pre_lunch,t3_harmone_value t4_harmone_value,tsh_value from thyroid_diabetes where td_id= $1",
+      "Select sugar_post_lunch, sugar_pre_lunch,t3_harmone_value ,t4_harmone_value,tsh_value from thyroid_diabetes where td_id= $1",
       [consume_row.rows[0].td_id]
     );
 
