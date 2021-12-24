@@ -305,20 +305,20 @@ exports.calcCriticalScores = async (req, res) => {
     }
 
     const result = {
-      Patient_Condition: condition,
+      Patient_Condition: abnormalityScore,
       Abnormalities: [],
     };
 
-    // BP_Abnormality != null
-    //   ? result.Abnormalities.push(BP_Abnormality)
-    //   : console.log("No abnormality in BP found");
-    // pulseAbnormality != null
-    //   ? result.Abnormalities.push(pulseAbnormality)
-    //   : console.log("No abnormality in Pulse found");
-    // temperatureAbnormality != null
-    //   ? result.Abnormalities.push(temperatureAbnormality)
-    //   : console.log("No abnormality in Temperature found");
-    console.log(BP_Abnormality, pulseAbnormality, temperatureAbnormality);
+     BP_Abnormality != null
+       ? result.Abnormalities.push(BP_Abnormality)
+       : console.log("No abnormality in BP found");
+     pulseAbnormality != null
+       ? result.Abnormalities.push(pulseAbnormality)
+       : console.log("No abnormality in Pulse found");
+     temperatureAbnormality != null
+       ? result.Abnormalities.push(temperatureAbnormality)
+       : console.log("No abnormality in Temperature found");
+    //console.log(BP_Abnormality, pulseAbnormality, temperatureAbnormality);
 
     res.status(201).json(result);
   } catch (error) {
@@ -407,44 +407,47 @@ function calculateAbnormalityBP(patientDetails, blood_pressure_data) {
   if (age > 17 && age < 36) {
     systolic_bp_mean > 150 || diastolic_bp_mean > 100
       ? (abnormality = "Hypertension")
-      : (abnormality = null);
+      : console.log();
     systolic_bp_mean < 82
       ? (abnormality = "Hypotension")
-      : (abnormality = null);
+      : console.log();
   } else if (age > 35 && age < 61) {
     systolic_bp_mean > 145 || diastolic_bp_mean > 95
       ? (abnormality = "Hypertension")
-      : (abnormality = null);
+      : console.log();
     systolic_bp_mean < 95
       ? (abnormality = "Hypotension")
-      : (abnormality = null);
+      : console.log();
   } else if (age > 60) {
     systolic_bp_mean > 140 || diastolic_bp_mean > 90
       ? (abnormality = "Hypertension")
-      : (abnormality = null);
+      : console.log();
     systolic_bp_mean < 117
       ? (abnormality = "Hypotension")
-      : (abnormality = null);
+      : console.log();
   }
+return abnormality;
 }
 
 function calculateAbnormalityPulse(patientDetails, pulse_data) {
   var { age } = patientDetails;
   var { pulse_mean } = pulse_data;
   age = parseInt(age);
+pulse_mean = parseFloat(pulse_mean)
 
   var abnormality = null;
 
   if (age > 17 && age < 36) {
-    pulse_mean <= 55 ? (abnormality = "Bradycardia") : (abnormality = null);
-    pulse_mean >= 110 ? (abnormality = "Tachycardia") : (abnormality = null);
+    pulse_mean <= 55 ? (abnormality = "Bradycardia") : console.log("");
+    pulse_mean >= 110 ? (abnormality = "Tachycardia") : console.log();
   } else if (age > 35 && age < 61) {
-    pulse_mean <= 60 ? (abnormality = "Bradycardia") : (abnormality = null);
-    pulse_mean >= 120 ? (abnormality = "Tachycardia") : (abnormality = null);
+    pulse_mean <= 60 ? (abnormality = "Bradycardia") : console.log();
+    pulse_mean >= 120 ? (abnormality = "Tachycardia") : console.log();
   } else if (age > 60) {
-    pulse_mean <= 65 ? (abnormality = "Bradycardia") : (abnormality = null);
-    pulse_mean >= 100 ? (abnormality = "Tachycardia") : (abnormality = null);
+    pulse_mean <= 65 ? (abnormality = "Bradycardia") : console.log();
+    pulse_mean >= 100 ? (abnormality = "Tachycardia") : console.log();
   }
+return abnormality;
 }
 
 function calculateAbnormalityTemperature(
@@ -456,11 +459,11 @@ function calculateAbnormalityTemperature(
   var { mean_body_temperature } = body_temperature_data;
   if (parseInt(age) > 17) {
     parseFloat(mean_body_temperature) < 35.5
-      ? (abnormality = "Hypothermia")
-      : (abnormality = null);
+      ? (abnormality = "Hypothermia- Fever")
+      : console.log();
     parseFloat(mean_body_temperature) > 37.1
       ? (abnormality = "Fever")
-      : (abnormality = null);
+      : console.log();
   }
   return abnormality;
 }
