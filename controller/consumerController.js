@@ -108,8 +108,8 @@ exports.consumeBP = async (req, res) => {
 
     res.send(`Consuming the topic you have sent wait for ${seconds} seconds`);
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    console.error(error.message);
+    res.status(500).send("Server Error");
   }
 };
 
@@ -179,8 +179,8 @@ exports.consumeTemp = async (req, res) => {
 
     res.send(`Consuming the topic you have sent wait for ${seconds} seconds`);
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
+    console.error(error.message);
+    res.status(500).send("Server Error");
   }
 };
 
@@ -213,22 +213,45 @@ exports.reviewData = async (req, res) => {
       [consume_row.rows[0].vtemp_id]
     );
 
-    const bp = {
-      systolic_bp_mean: bp_vital_data.rows[0].systolic_avg_bp,
-      systolic_collected_variation: bp_vital_data.rows[0].systolic_sd_bp,
-      diastolic_bp_mean: bp_vital_data.rows[0].diastolic_avg_bp,
-      diastolic_collected_variation: bp_vital_data.rows[0].diastolic_sd_bp,
-    };
+    var bp = {};
+    var pulse = {};
+    var tempValues = {};
 
-    const pulse = {
-      pulse_mean: bp_vital_data.rows[0].heartrate_avg,
-      pulse_collected_variation: bp_vital_data.rows[0].heartrate_sd,
-    };
+    if (bp_vital_data.rowCount == 0) {
+      bp = {
+        systolic_bp_mean: "NA",
+        systolic_collected_variation: "NA",
+        diastolic_bp_mean: "NA",
+        diastolic_collected_variation: "NA",
+      };
+      pulse = {
+        pulse_mean: "NA",
+        pulse_collected_variation: "NA",
+      };
+    } else {
+      bp = {
+        systolic_bp_mean: bp_vital_data.rows[0].systolic_avg_bp,
+        systolic_collected_variation: bp_vital_data.rows[0].systolic_sd_bp,
+        diastolic_bp_mean: bp_vital_data.rows[0].diastolic_avg_bp,
+        diastolic_collected_variation: bp_vital_data.rows[0].diastolic_sd_bp,
+      };
+      pulse = {
+        pulse_mean: bp_vital_data.rows[0].heartrate_avg,
+        pulse_collected_variation: bp_vital_data.rows[0].heartrate_sd,
+      };
+    }
 
-    const tempValues = {
-      mean_body_temperature: temp_vital_data.rows[0].temp_avg,
-      variance_body_temperature: temp_vital_data.rows[0].temp_sd,
-    };
+    if (temp_vital_data.rowCount == 0) {
+      tempValues = {
+        mean_body_temperature: "NA",
+        variance_body_temperature: "NA",
+      };
+    } else {
+      tempValues = {
+        mean_body_temperature: temp_vital_data.rows[0].temp_avg,
+        variance_body_temperature: temp_vital_data.rows[0].temp_sd,
+      };
+    }
 
     var result = {
       patientDetails: patient.rows[0],
@@ -241,7 +264,7 @@ exports.reviewData = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send(error.message);
+    res.status(500).send("Server Error");
   }
 };
 
@@ -281,7 +304,7 @@ exports.calcCriticalScores = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send(error.message);
+    res.status(500).send("Server Error");
   }
 };
 
