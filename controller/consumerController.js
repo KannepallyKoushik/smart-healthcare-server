@@ -302,23 +302,24 @@ exports.calcCriticalScores = async (req, res) => {
       condition = "moderate condition";
     } else if (abnormalityScore <= 2) {
       condition = "mild condition";
+    } else if (abnormalityScore == 0) {
+      condition = "normal";
     }
 
     const result = {
-      Patient_Condition: abnormalityScore,
+      Patient_Condition: normal,
       Abnormalities: [],
     };
 
-     BP_Abnormality != null
-       ? result.Abnormalities.push(BP_Abnormality)
-       : console.log("No abnormality in BP found");
-     pulseAbnormality != null
-       ? result.Abnormalities.push(pulseAbnormality)
-       : console.log("No abnormality in Pulse found");
-     temperatureAbnormality != null
-       ? result.Abnormalities.push(temperatureAbnormality)
-       : console.log("No abnormality in Temperature found");
-    //console.log(BP_Abnormality, pulseAbnormality, temperatureAbnormality);
+    BP_Abnormality != null
+      ? result.Abnormalities.push(BP_Abnormality)
+      : console.log("No abnormality in BP found");
+    pulseAbnormality != null
+      ? result.Abnormalities.push(pulseAbnormality)
+      : console.log("No abnormality in Pulse found");
+    temperatureAbnormality != null
+      ? result.Abnormalities.push(temperatureAbnormality)
+      : console.log("No abnormality in Temperature found");
 
     res.status(201).json(result);
   } catch (error) {
@@ -408,32 +409,26 @@ function calculateAbnormalityBP(patientDetails, blood_pressure_data) {
     systolic_bp_mean > 150 || diastolic_bp_mean > 100
       ? (abnormality = "Hypertension")
       : console.log();
-    systolic_bp_mean < 82
-      ? (abnormality = "Hypotension")
-      : console.log();
+    systolic_bp_mean < 82 ? (abnormality = "Hypotension") : console.log();
   } else if (age > 35 && age < 61) {
     systolic_bp_mean > 145 || diastolic_bp_mean > 95
       ? (abnormality = "Hypertension")
       : console.log();
-    systolic_bp_mean < 95
-      ? (abnormality = "Hypotension")
-      : console.log();
+    systolic_bp_mean < 95 ? (abnormality = "Hypotension") : console.log();
   } else if (age > 60) {
     systolic_bp_mean > 140 || diastolic_bp_mean > 90
       ? (abnormality = "Hypertension")
       : console.log();
-    systolic_bp_mean < 117
-      ? (abnormality = "Hypotension")
-      : console.log();
+    systolic_bp_mean < 117 ? (abnormality = "Hypotension") : console.log();
   }
-return abnormality;
+  return abnormality;
 }
 
 function calculateAbnormalityPulse(patientDetails, pulse_data) {
   var { age } = patientDetails;
   var { pulse_mean } = pulse_data;
   age = parseInt(age);
-pulse_mean = parseFloat(pulse_mean)
+  pulse_mean = parseFloat(pulse_mean);
 
   var abnormality = null;
 
@@ -447,7 +442,7 @@ pulse_mean = parseFloat(pulse_mean)
     pulse_mean <= 65 ? (abnormality = "Bradycardia") : console.log();
     pulse_mean >= 100 ? (abnormality = "Tachycardia") : console.log();
   }
-return abnormality;
+  return abnormality;
 }
 
 function calculateAbnormalityTemperature(
