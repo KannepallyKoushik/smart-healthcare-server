@@ -321,13 +321,13 @@ exports.calcCriticalScores = async (req, res) => {
 
     res.status(201).json(result);
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     res.status(500).send("Server Error");
   }
 };
 
 function criticalAbnormalityScore(patientDetails, Sugar_Thyroid_Levels) {
-  const { age, diabetes, prevalentstroke } = patientDetails;
+  var { age, diabetes, prevalentstroke } = patientDetails;
   const {
     sugar_post_lunch,
     sugar_pre_lunch,
@@ -395,8 +395,8 @@ function criticalAbnormalityScore(patientDetails, Sugar_Thyroid_Levels) {
 }
 
 function calculateAbnormalityBP(patientDetails, blood_pressure_data) {
-  const { age } = patientDetails;
-  const { systolic_bp_mean, diastolic_bp_mean } = blood_pressure_data;
+  var { age } = patientDetails;
+  var { systolic_bp_mean, diastolic_bp_mean } = blood_pressure_data;
   age = parseInt(age);
   systolic_bp_mean = parseFloat(systolic_bp_mean);
   diastolic_bp_mean = parseFloat(diastolic_bp_mean);
@@ -428,8 +428,8 @@ function calculateAbnormalityBP(patientDetails, blood_pressure_data) {
 }
 
 function calculateAbnormalityPulse(patientDetails, pulse_data) {
-  const { age } = patientDetails;
-  const { pulse_mean } = pulse_data;
+  var { age } = patientDetails;
+  var { pulse_mean } = pulse_data;
   age = parseInt(age);
 
   var abnormality = null;
@@ -451,8 +451,8 @@ function calculateAbnormalityTemperature(
   body_temperature_data
 ) {
   var abnormality = null;
-  const { age } = patientDetails;
-  const { mean_body_temperature } = body_temperature_data;
+  var { age } = patientDetails;
+  var { mean_body_temperature } = body_temperature_data;
   if (parseInt(age) > 17) {
     parseFloat(mean_body_temperature) < 35.5
       ? (abnormality = "Hypothermia")
