@@ -416,7 +416,7 @@ function calculateAbnormalityBP(patientDetails, blood_pressure_data) {
   var { age } = patientDetails;
   var { systolic_bp_mean, diastolic_bp_mean } = blood_pressure_data;
   if ((systolic_bp_mean == "NA", diastolic_bp_mean == "NA")) {
-    return "Not Determinded due to Missing data";
+    return "BP Abnormalities Not Determinded due to Missing data";
   }
   age = parseInt(age);
   systolic_bp_mean = parseFloat(systolic_bp_mean);
@@ -447,7 +447,7 @@ function calculateAbnormalityPulse(patientDetails, pulse_data) {
   var { age } = patientDetails;
   var { pulse_mean } = pulse_data;
   if (pulse_mean == "NA") {
-    return "Not Determinded due to Missing data";
+    return "Abnormalities in Heart Data Not Determinded due to Missing data";
   }
   age = parseInt(age);
   pulse_mean = parseFloat(pulse_mean);
@@ -475,7 +475,7 @@ function calculateAbnormalityTemperature(
   var { age } = patientDetails;
   var { mean_body_temperature } = body_temperature_data;
   if (mean_body_temperature == "NA") {
-    return "Not Determinded due to Missing data";
+    return "Abnormality in Body Temperature Not Determinded due to Missing data";
   }
   if (parseInt(age) > 17) {
     parseFloat(mean_body_temperature) < 35.5
