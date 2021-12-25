@@ -266,13 +266,15 @@ exports.pushToCloud = async (req, res) => {
     }
 
     var dictstring = JSON.stringify(result);
-    var filename = makeid(10) + ".json";
+    var filename ="data/" + makeid(10) + ".json";
 
     fs.writeFile(filename, dictstring, function (err, result) {
       if (err) console.log("error", err);
     });
 
-    res.status(200).json(result);
+    res.status(200).json({
+message: "successfuly pushed the data to cloud server for further analysis"
+});
   } catch (error) {
     console.error(error.message);
     res.status(500).send(error.message);
