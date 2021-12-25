@@ -1,4 +1,5 @@
 const pool = require("../db");
+var fs = require("fs");
 
 exports.getAllPatients = async (req, res) => {
   try {
@@ -264,9 +265,27 @@ exports.pushToCloud = async (req, res) => {
       result.data.push(stored_consumed_data);
     }
 
+    var dictstring = JSON.stringify(result);
+    var filename = makeid(10) + ".json";
+
+    fs.writeFile(filename, dictstring, function (err, result) {
+      if (err) console.log("error", err);
+    });
+
     res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
     res.status(500).send(error.message);
   }
 };
+
+function makeid(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
